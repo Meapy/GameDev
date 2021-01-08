@@ -13,7 +13,7 @@ int main()
 
 
 	//game loop
-	while (game.getWindowIsOpen()) 
+	while (game.getWindowIsOpen() && !game.getEndGame()) 
 	{
 		
 		//update
@@ -23,9 +23,6 @@ int main()
 		game.render();
 
 	}
-
-	
-
 
 	return 0;
 }
