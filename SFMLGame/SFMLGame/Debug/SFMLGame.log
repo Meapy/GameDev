@@ -1,3 +1,4 @@
 ﻿  Game.cpp
 C:\Users\Daniel Krasovski\Documents\GitHub\GameDev\SFMLGame\SFMLGame\Game.cpp(152,21): warning C4018: '<': signed/unsigned mismatch
 C:\Users\Daniel Krasovski\Documents\GitHub\GameDev\SFMLGame\SFMLGame\Game.cpp(166,19): warning C4018: '<': signed/unsigned mismatch
+  SFMLGame.vcxproj -> C:\Users\Daniel Krasovski\Documents\GitHub\GameDev\SFMLGame\Debug\SFMLGame.exe
