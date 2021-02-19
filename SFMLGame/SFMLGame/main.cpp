@@ -13,7 +13,7 @@ int main()
 
 
 	//game loop
-	while (game.getWindowIsOpen() && !game.getEndGame()) 
+	while (game.getWindowIsOpen()) 
 	{
 		
 		//update

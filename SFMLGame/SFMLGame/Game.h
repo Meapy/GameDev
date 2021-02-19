@@ -4,6 +4,8 @@
 #include<vector>
 #include<ctime>
 #include<sstream>
+#include<string>
+#include<fstream>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
@@ -43,6 +45,10 @@ private:
 	float enemySpawnTimeMax;
 	int maxEnemies;
 	bool mouseHeld;
+
+	unsigned highscore[5];
+	int temp;
+
 
 	//game objects
 	std::vector<sf::RectangleShape> enemies;

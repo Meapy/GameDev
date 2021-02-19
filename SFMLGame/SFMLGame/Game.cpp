@@ -22,6 +22,7 @@ void Game::initWindow()
 	videoMode.width = 1280;
 
 	window = new sf::RenderWindow(videoMode, "Game_Title", sf::Style::Titlebar | sf::Style::Close);
+
 	window->setFramerateLimit(75);
 }
 void Game::initFonts()
@@ -166,7 +167,7 @@ void Game::updateEnemies()
 	for (int i =0; i < enemies.size(); i++)
 	{
 		bool deleted = false;
-		enemies[i].move(0.f,2.f);
+		enemies[i].move(0.f,10.f);
 
 		//if enemey gets past the bottom of the screen
 		if (enemies[i].getPosition().y > window->getSize().y)
@@ -240,12 +241,65 @@ void Game::update()
 
 		updateEnemies();
 	}
-
 	//end game condition
-	if (health <= 0)
+	if (health <= 0 && !endGame)
 	{
+
+		std::ifstream input("Resources/highscore.txt");
+		int i = 0;
+		while (input >> highscore[i])
+		{
+			std::cout << highscore[i]<<"\n";
+			i++;
+		}
+		std::ofstream output("Resources/highscore.txt");
+		int k;
+		for (size_t i = 0; i < 5; i++)
+		{
+			if (points >= highscore[i])
+			{
+				highscore[i] = points;
+				temp = highscore[i];
+				output << std::to_string(highscore[i]) << "\n";
+				k = i;
+				while (k < 5);
+				{
+					output << std::to_string(temp) << "\n";
+					k++;
+					temp = highscore[k];
+						
+				}
+				output.close();
+				break;
+			}
+			output << std::to_string(highscore[i]) << "\n";
+		}
 		endGame = true;
+		updateText();
+		for(int i = 0; i < enemies.size(); i++)
+		{
+			enemies.erase(enemies.begin() + i);
+		}
+		input.close();
+	} 
+	if (endGame)
+	{
+		updateText();
+		window->clear();
+		std::stringstream highscores;
+		
+
+		
+		for (size_t i = 0; i < 5; i++)
+		{
+			highscores << "High Score " << i+1 << ": " << highscore[i] << "\n";
+		}
+
+
+		uiText.setString(highscores.str());
+		updateMousePositions();
 	}
+	
 	
 }
 
@@ -270,7 +324,6 @@ void Game::render()
 	//draw game objects
 	renderEnemies(*window);
 	renderText(*window);
-
 
 	window->display();
 }
