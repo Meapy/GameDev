@@ -283,16 +283,16 @@ void Game::updateDifficulty()
 	if (points >= 1000 && points < 2000)
 	{
 		enemySpawnTimeMax = 15.f;
-		sidespeed = 2.f;
-		movespeed = 6.f;
+		sidespeed = 1.5f;
+		movespeed = 5.5f;
 		enemySpawnTimer = enemySpawnTimeMax;
 		maxEnemies = 8;
 	}
 	else if (points >= 2000)
 	{
 		enemySpawnTimeMax = 10.f;
-		sidespeed = 3.f;
-		movespeed = 7.f;
+		sidespeed = 2.f;
+		movespeed = 6.f;
 		enemySpawnTimer = enemySpawnTimeMax;
 		maxEnemies = 10;
 	}
@@ -377,7 +377,6 @@ void Game::update()
 		uiText.setString(highscores.str());
 		updateMousePositions();
 	}
-	
 	
 }
 
