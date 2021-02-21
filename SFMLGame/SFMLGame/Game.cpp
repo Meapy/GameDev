@@ -90,11 +90,11 @@ void Game::spawnEnemy()
 	{
 	case 0:
 		enemy.setFillColor(sf::Color::Cyan);
-		enemy.setSize(sf::Vector2f(20.f, 20.f));
+		enemy.setSize(sf::Vector2f(40.f, 40.f));
 		break;	
 	case 1:
 		enemy.setFillColor(sf::Color::Magenta);
-		enemy.setSize(sf::Vector2f(40.f, 40.f));
+		enemy.setSize(sf::Vector2f(50.f, 50.f));
 		break;	
 	case 2:
 		enemy.setFillColor(sf::Color::Green);
@@ -167,10 +167,10 @@ void Game::updateEnemies()
 	for (int i =0; i < enemies.size(); i++)
 	{
 		bool deleted = false;
-		enemies[i].move(0.f,10.f);
+		enemies[i].move(0.f,5.f);
 
 		//if enemey gets past the bottom of the screen
-		if (enemies[i].getPosition().y > window->getSize().y)
+		if (enemies[i].getPosition().y > window->getSize().y && enemies[i].getFillColor() != sf::Color::Red)
 		{
 			enemies.erase(enemies.begin() + i);
 			health -= 5;
@@ -194,17 +194,19 @@ void Game::updateEnemies()
 				{
 					
 					//gain points
-					if (enemies[i].getFillColor() == sf::Color::Cyan)
+					if (enemies[i].getFillColor() == sf::Color::Green)
 					{
 						points += 25;
+						health += 5;
 						std::cout << "points:" << points << "\n";
+						std::cout << "health:" << health << "\n";
 					}
 					else if (enemies[i].getFillColor() == sf::Color::Magenta)
 					{
 						points += 20;
 						std::cout << "points:" << points << "\n";
 					}
-					else if (enemies[i].getFillColor() == sf::Color::Green)
+					else if (enemies[i].getFillColor() == sf::Color::Cyan)
 					{
 						points += 15;
 						std::cout << "points:" << points << "\n";
@@ -244,7 +246,7 @@ void Game::update()
 	//end game condition
 	if (health <= 0 && !endGame)
 	{
-
+	
 		std::ifstream input("Resources/highscore.txt");
 		int i = 0;
 		while (input >> highscore[i])
@@ -252,35 +254,42 @@ void Game::update()
 			std::cout << highscore[i]<<"\n";
 			i++;
 		}
+		input.close();
 		std::ofstream output("Resources/highscore.txt");
 		int k;
 		for (size_t i = 0; i < 5; i++)
 		{
 			if (points >= highscore[i])
 			{
-				highscore[i] = points;
 				temp = highscore[i];
+				highscore[i] = points;			
 				output << std::to_string(highscore[i]) << "\n";
-				k = i;
-				while (k < 5);
+				for(k = i + 1; k < 5; k++)
 				{
 					output << std::to_string(temp) << "\n";
-					k++;
+					i++;
 					temp = highscore[k];
-						
+					highscore[i] = temp;
 				}
-				output.close();
 				break;
 			}
-			output << std::to_string(highscore[i]) << "\n";
+			else 
+			{
+
+				output << std::to_string(highscore[i]) << "\n";
+			}
 		}
+		output.close();
+
 		endGame = true;
 		updateText();
-		for(int i = 0; i < enemies.size(); i++)
+		for (int i = 0; i <= enemies.size(); i++)
 		{
 			enemies.erase(enemies.begin() + i);
+			enemies.erase(enemies.begin() + i);
+			enemies[i].setFillColor(sf::Color::Black);
 		}
-		input.close();
+
 	} 
 	if (endGame)
 	{
@@ -288,13 +297,15 @@ void Game::update()
 		window->clear();
 		std::stringstream highscores;
 		
-
-		
-		for (size_t i = 0; i < 5; i++)
+		highscores << "Your score that round: " << points << "\n";
+		int i = 0;
+		std::ifstream input("Resources/highscore.txt");
+		while (input >> highscore[i])
 		{
-			highscores << "High Score " << i+1 << ": " << highscore[i] << "\n";
+			highscores << "High Score " << i + 1 << ": " << highscore[i] << "\n";
+			i++;
 		}
-
+		input.close();
 
 		uiText.setString(highscores.str());
 		updateMousePositions();
