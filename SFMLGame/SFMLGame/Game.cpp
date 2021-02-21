@@ -9,10 +9,14 @@ void Game::initiVariables()
 	endGame = false;
 	points = 0;
 	health = 100;
-	enemySpawnTimeMax = 25.f;
+	enemySpawnTimeMax = 20.f;
+	sidespeed = 1.f;
+	invertsidespeed = sidespeed * -1.f;
+	movespeed = 5.f;
 	enemySpawnTimer = enemySpawnTimeMax;
-	maxEnemies = 8;
+	maxEnemies = 6;
 	mouseHeld = false;
+	movedRight = true;
 
 }
 
@@ -85,10 +89,10 @@ void Game::spawnEnemy()
 	);
 
 	//randomize enemy type
-	int type = rand() % 6;
+	int type = rand() % 5;
 	std::vector<float> list{ 30,50,70,100 };
 	int index = rand() % list.size();
-	int value = list[index];
+	float value = list[index];
 	switch (type)
 	{
 	case 0:
@@ -174,9 +178,25 @@ void Game::updateEnemies()
 	for (int i =0; i < enemies.size(); i++)
 	{
 		bool deleted = false;
-		enemies[i].move(0.f,5.f);
+		//check if enemy moves sideways
+		if (enemies[i].getPosition().x > window->getSize().x && movedRight == false)
+		{
+			movedRight = true;
+		}
+		else if (enemies[i].getPosition().x < 0 && movedRight == true)
+		{
+			movedRight = false;
+		}
+		if (movedRight == false)
+		{
+			enemies[i].move(sidespeed, movespeed);
+		}
+		else if(movedRight == true)
+		{
+			enemies[i].move(invertsidespeed, movespeed);
+		}
 
-		//if enemey gets past the bottom of the screen
+		//if enemy gets past the bottom of the screen
 		if (enemies[i].getPosition().y > window->getSize().y)
 		{
 			if (enemies[i].getFillColor() != sf::Color::Red)
@@ -192,7 +212,7 @@ void Game::updateEnemies()
 			}
 			
 		}
-
+		
 	}
 
 	//check if clicked upon
@@ -234,7 +254,11 @@ void Game::updateEnemies()
 					}
 					else if (enemies[i].getFillColor() == sf::Color::Red)
 					{
-						points -= 20;
+						if (points > 20) 
+						{
+							points -= 20;
+							
+						}
 						health -= 5;
 						std::cout << "points:" << points << "\n";
 						std::cout << "health:" << health << "\n";
@@ -254,6 +278,26 @@ void Game::updateEnemies()
 	}
 }
 
+void Game::updateDifficulty()
+{
+	if (points >= 1000 && points < 2000)
+	{
+		enemySpawnTimeMax = 15.f;
+		sidespeed = 2.f;
+		movespeed = 6.f;
+		enemySpawnTimer = enemySpawnTimeMax;
+		maxEnemies = 8;
+	}
+	else if (points >= 2000)
+	{
+		enemySpawnTimeMax = 10.f;
+		sidespeed = 3.f;
+		movespeed = 7.f;
+		enemySpawnTimer = enemySpawnTimeMax;
+		maxEnemies = 10;
+	}
+}
+
 void Game::update()
 {
 	pollEvents();
@@ -265,6 +309,9 @@ void Game::update()
 		updateText();
 
 		updateEnemies();
+
+		updateDifficulty();
+
 	}
 	//end game condition
 	if (health <= 0 && !endGame)
@@ -308,8 +355,6 @@ void Game::update()
 		updateText();
 		for (int i = 0; i <= enemies.size(); i++)
 		{
-			enemies.erase(enemies.begin() + i);
-			enemies.erase(enemies.begin() + i);
 			enemies[i].setFillColor(sf::Color::Black);
 		}
 
@@ -329,7 +374,6 @@ void Game::update()
 			i++;
 		}
 		input.close();
-
 		uiText.setString(highscores.str());
 		updateMousePositions();
 	}
@@ -361,5 +405,3 @@ void Game::render()
 
 	window->display();
 }
-
-//functions 

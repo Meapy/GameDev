@@ -39,10 +39,14 @@ private:
 
 	//game logic
 	bool endGame;
+	bool movedRight;
 	unsigned points;
 	int health;
 	float enemySpawnTimer;
 	float enemySpawnTimeMax;
+	float movespeed;
+	float sidespeed;
+	float invertsidespeed;
 	int maxEnemies;
 	bool mouseHeld;
 
@@ -75,10 +79,12 @@ public:
 	//functions 
 	void spawnEnemy();
 
+
 	void pollEvents();
 	void updateMousePositions();
 	void updateText();
 	void updateEnemies();
+	void updateDifficulty();
 	void update();
 
 	void renderText(sf::RenderTarget& target);
