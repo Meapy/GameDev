@@ -85,7 +85,10 @@ void Game::spawnEnemy()
 	);
 
 	//randomize enemy type
-	int type = rand() % 5;
+	int type = rand() % 6;
+	std::vector<float> list{ 30,50,70,100 };
+	int index = rand() % list.size();
+	int value = list[index];
 	switch (type)
 	{
 	case 0:
@@ -99,10 +102,14 @@ void Game::spawnEnemy()
 	case 2:
 		enemy.setFillColor(sf::Color::Green);
 		enemy.setSize(sf::Vector2f(70.f, 70.f));
-		break;;	
+		break;
 	case 3:
 		enemy.setFillColor(sf::Color::Blue);
 		enemy.setSize(sf::Vector2f(100.f, 100.f));
+		break;
+	case 4:
+		enemy.setFillColor(sf::Color::Red);
+		enemy.setSize(sf::Vector2f(value, value));
 		break;
 	default:
 		break;
@@ -170,11 +177,20 @@ void Game::updateEnemies()
 		enemies[i].move(0.f,5.f);
 
 		//if enemey gets past the bottom of the screen
-		if (enemies[i].getPosition().y > window->getSize().y && enemies[i].getFillColor() != sf::Color::Red)
+		if (enemies[i].getPosition().y > window->getSize().y)
 		{
-			enemies.erase(enemies.begin() + i);
-			health -= 5;
-			std::cout << "health:" << health << "\n";
+			if (enemies[i].getFillColor() != sf::Color::Red)
+			{
+				enemies.erase(enemies.begin() + i);
+				health -= 5;
+				std::cout << "health:" << health << "\n";
+			}
+			else 
+			{
+				enemies.erase(enemies.begin() + i);
+				std::cout << "health:" << health << "\n";
+			}
+			
 		}
 
 	}
@@ -215,6 +231,13 @@ void Game::updateEnemies()
 					{
 						points += 10;
 						std::cout << "points:" << points << "\n";
+					}
+					else if (enemies[i].getFillColor() == sf::Color::Red)
+					{
+						points -= 20;
+						health -= 5;
+						std::cout << "points:" << points << "\n";
+						std::cout << "health:" << health << "\n";
 					}
 
 					//delete the enemy
