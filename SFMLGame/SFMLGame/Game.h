@@ -36,6 +36,7 @@ private:
 
 	//text
 	sf::Text uiText;
+	sf::Text infoUpdate;
 
 	//game logic
 	bool endGame;

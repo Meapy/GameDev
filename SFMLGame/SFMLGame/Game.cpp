@@ -7,7 +7,7 @@ void Game::initiVariables()
 	window = nullptr;
 
 	endGame = false;
-	points = 900;
+	points = 0;
 	health = 100;
 	enemySpawnTimeMax = 20.f;
 	sidespeed = 0.5f;
@@ -43,14 +43,19 @@ void Game::initText()
 	uiText.setCharacterSize(30);
 	uiText.setFillColor(sf::Color::Red);
 	uiText.setString("None");
+
+	infoUpdate.setFont(font);
+	infoUpdate.setCharacterSize(30);
+	infoUpdate.setFillColor(sf::Color::White);
+	infoUpdate.setString("None");
+	infoUpdate.setPosition(window->getSize().x *.85 , 0);
 }
 void Game::initEnemies()
 {
 	enemy.setPosition(10.f,10.f);
 	enemy.setSize(sf::Vector2f(100.f, 100.f));
 	enemy.setFillColor(sf::Color::Green);
-	//this->enemy.setOutlineColor(sf::Color::White);
-	//this->enemy.setOutlineThickness(2.f);
+
 
 }
 //constuctors / destructors 
@@ -110,12 +115,12 @@ void Game::spawnEnemy()
 		break;	
 	case 2:
 		enemy.setFillColor(sf::Color::Green);
-		enemy.setSize(sf::Vector2f(70.f, 70.f));
+		enemy.setSize(sf::Vector2f(60.f, 60.f));
 		enemy.setOutlineColor(colors[direction]);
 		break;
 	case 3:
 		enemy.setFillColor(sf::Color::Blue);
-		enemy.setSize(sf::Vector2f(100.f, 100.f));
+		enemy.setSize(sf::Vector2f(90.f, 90.f));
 		enemy.setOutlineColor(colors[direction]);
 		break;
 	case 4:
@@ -170,10 +175,12 @@ void Game::updateText()
 		<< "\nHealth:" << health;
 	uiText.setString(ss.str());
 
+
 }
 
 void Game::updateEnemies()
 {
+	std::stringstream ss;
 	//updates enemy spawn timer
 	if (enemies.size() < maxEnemies)
 	{
@@ -260,34 +267,41 @@ void Game::updateEnemies()
 						health += 5;
 						std::cout << "points:" << points << "\n";
 						std::cout << "health:" << health << "\n";
+						ss << "Score: + 15 \n Health + 5";
+						
 					}
 					else if (enemies[i].getFillColor() == sf::Color::Magenta)
 					{
 						points += 20;
 						std::cout << "points:" << points << "\n";
+						ss << "Score: + 20";
 					}
 					else if (enemies[i].getFillColor() == sf::Color::Cyan)
 					{
 						points += 15;
 						std::cout << "points:" << points << "\n";
+						ss << "Score: + 15";
 					}
 					else if (enemies[i].getFillColor() == sf::Color::Blue)
 					{
 						points += 10;
 						std::cout << "points:" << points << "\n";
+						ss << "Score: + 10";
 					}
 					else if (enemies[i].getFillColor() == sf::Color::Red )
 					{
 						if (points > 20) 
 						{
 							points -= 20;
+
 							
 						}
 						health -= 5;
 						std::cout << "points:" << points << "\n";
 						std::cout << "health:" << health << "\n";
+						ss << "Score: - 20 \n Health -5";
 					}
-
+					infoUpdate.setString(ss.str());
 					//delete the enemy
 					deleted = true;
 					enemies.erase(enemies.begin() + i);
@@ -399,6 +413,8 @@ void Game::update()
 		updateText();
 		window->clear();
 		std::stringstream highscores;
+		std::stringstream message;
+		message << "Press Enter\n to go again \n";
 		
 		highscores << "Your score that round: " << points << "\n";
 		int i = 0;
@@ -410,6 +426,7 @@ void Game::update()
 		}
 		input.close();
 		uiText.setString(highscores.str());
+		infoUpdate.setString(message.str());
 		updateMousePositions();
 	}
 	
@@ -418,6 +435,7 @@ void Game::update()
 void Game::renderText(sf::RenderTarget& target)
 {
 	target.draw(uiText);
+	target.draw(infoUpdate);
 }
 
 void Game::renderEnemies(sf::RenderTarget& target)
