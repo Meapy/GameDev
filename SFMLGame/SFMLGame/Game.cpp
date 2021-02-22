@@ -16,8 +16,7 @@ void Game::initiVariables()
 	enemySpawnTimer = enemySpawnTimeMax;
 	maxEnemies = 6;
 	mouseHeld = false;
-	movedRight = true;
-	evenLevel = true;
+	evenLevel = true; //used to determine level once, 
 
 }
 
@@ -39,12 +38,12 @@ void Game::initFonts()
 }
 void Game::initText()
 {
-	uiText.setFont(font);
+	uiText.setFont(font);  //health and score text, and then used for the highscores
 	uiText.setCharacterSize(30);
 	uiText.setFillColor(sf::Color::Red);
 	uiText.setString("None");
 
-	infoUpdate.setFont(font);
+	infoUpdate.setFont(font);  //used for the update text to show how much score/hp you gain, then used for restart game info
 	infoUpdate.setCharacterSize(30);
 	infoUpdate.setFillColor(sf::Color::White);
 	infoUpdate.setString("None");
@@ -97,16 +96,16 @@ void Game::spawnEnemy()
 	//randomize enemy type
 	int type = rand() % 5;
 	std::vector<float> list{ 30,50,70,100 };
-	sf::Color colors[] = { sf::Color::White, sf::Color::Black };
+	sf::Color colors[] = { sf::Color::White, sf::Color::Black }; // using border colours to determine sideways direction
 	int index = rand() % list.size();
-	int direction = rand() % 2;
+	int direction = rand() % 2; //chooses random
 	float value = list[index];
 	switch (type)
 	{
 	case 0:
 		enemy.setFillColor(sf::Color::Cyan);
 		enemy.setSize(sf::Vector2f(40.f, 40.f));
-		enemy.setOutlineColor(colors[direction]);
+		enemy.setOutlineColor(colors[direction]); //where direction gets chosen
 		break;	
 	case 1:
 		enemy.setFillColor(sf::Color::Magenta);
@@ -146,11 +145,11 @@ void Game::pollEvents()
 			window->close();
 			break;
 		case sf::Event::KeyPressed:
-			if (ev.key.code == sf::Keyboard::Escape)
+			if (ev.key.code == sf::Keyboard::Escape) 
 			{
 				window->close();
 			}
-			if (ev.key.code == sf::Keyboard::Enter && endGame == true)
+			if (ev.key.code == sf::Keyboard::Enter && endGame == true)// game restart 
 			{
 				endGame = false;
 				health = 100;
@@ -199,7 +198,7 @@ void Game::updateEnemies()
 	for (int i =0; i < enemies.size(); i++)
 	{
 		bool deleted = false;
-		//check if enemy moves sideways
+		//check if enemy moves sideways, if past border, outline gets changed
 		if (enemies[i].getPosition().x > window->getSize().x - 50)
 		{
 			enemies[i].setOutlineColor(sf::Color::White);
@@ -208,7 +207,7 @@ void Game::updateEnemies()
 		{
 			enemies[i].setOutlineColor(sf::Color::Black);
 		}
-
+		//checks which direction it was going before, via border colour, then inverts the speed to go other direction
 		if (enemies[i].getPosition().x < window->getSize().x && enemies[i].getOutlineColor() == sf::Color::White)
 		{
 			
@@ -219,14 +218,14 @@ void Game::updateEnemies()
 			enemies[i].move(sidespeed, movespeed);
 		}
 
-		//if enemy gets past the bottom of the screen
+		//if enemy gets past the bottom of the screen, gets deleted, red or black squares doesnt take away hp
 		if (enemies[i].getPosition().y > window->getSize().y)
 		{
 			if (enemies[i].getFillColor() != sf::Color::Red)
 			{
 				if (enemies[i].getFillColor() == sf::Color::Black)
 				{
-					enemies.erase(enemies.begin() + i);
+					enemies.erase(enemies.begin() + i); // deleting you was way to hard after game end...
 				}
 				else
 				{
@@ -255,13 +254,13 @@ void Game::updateEnemies()
 		{
 			mouseHeld = true;
 			bool deleted = false;
-			for (size_t i = 0; i < enemies.size() && deleted == false; i++)
+			for (size_t i = 0; i < enemies.size() && deleted == false; i++) //if you click on a sqaure
 			{
 				if (enemies[i].getGlobalBounds().contains(mousePosView))
 				{
 					
 					//gain points
-					if (enemies[i].getFillColor() == sf::Color::Green)
+					if (enemies[i].getFillColor() == sf::Color::Green) // if the square is green... same, concept for others
 					{
 						points += 25;
 						health += 5;
@@ -293,8 +292,6 @@ void Game::updateEnemies()
 						if (points > 20) 
 						{
 							points -= 20;
-
-							
 						}
 						health -= 5;
 						std::cout << "points:" << points << "\n";
@@ -316,9 +313,9 @@ void Game::updateEnemies()
 	}
 }
 
-void Game::updateDifficulty()
+void Game::updateDifficulty()// if score reaches one of the threshholds, the difficulty gets increased
 {
-	if(points < 1000 && evenLevel == true)
+	if(points < 1000 && evenLevel == true) 
 	{
 		enemySpawnTimeMax = 15.f;
 		sidespeed = 0.f;
@@ -366,7 +363,7 @@ void Game::update()
 	if (health <= 0 && !endGame)
 	{
 	
-		std::ifstream input("Resources/highscore.txt");
+		std::ifstream input("Resources/highscore.txt"); // reads the current highscores
 		int i = 0;
 		while (input >> highscore[i])
 		{
@@ -378,8 +375,8 @@ void Game::update()
 		int k;
 		for (size_t i = 0; i < 5; i++)
 		{
-			if (points >= highscore[i])
-			{
+			if (points >= highscore[i]) //compares the current score to the high scores
+			{							//once a match is found, the score is replaced, and others get sifted down
 				temp = highscore[i];
 				highscore[i] = points;			
 				output << std::to_string(highscore[i]) << "\n";
@@ -401,8 +398,8 @@ void Game::update()
 		output.close();
 		for (int i = 0; i <= enemies.size(); i++)
 		{
-			enemies[i].setFillColor(sf::Color::Black);
-		}
+			enemies[i].setFillColor(sf::Color::Black); //turns all the squares black to "delete" them, gets deleted once you go again
+		}												// for some reason they couldnt get deleted here.
 		endGame = true;
 		updateText();
 
@@ -421,7 +418,7 @@ void Game::update()
 		std::ifstream input("Resources/highscore.txt");
 		while (input >> highscore[i])
 		{
-			highscores << "High Score " << i + 1 << ": " << highscore[i] << "\n";
+			highscores << "High Score " << i + 1 << ": " << highscore[i] << "\n";  //reads the highscores from the file, 
 			i++;
 		}
 		input.close();
