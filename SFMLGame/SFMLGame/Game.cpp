@@ -145,6 +145,12 @@ void Game::pollEvents()
 			{
 				window->close();
 			}
+			if (ev.key.code == sf::Keyboard::Enter && endGame == true)
+			{
+				endGame = false;
+				health = 100;
+				points = 0;
+			}
 			break;
 		}
 	}
@@ -211,9 +217,17 @@ void Game::updateEnemies()
 		{
 			if (enemies[i].getFillColor() != sf::Color::Red)
 			{
-				enemies.erase(enemies.begin() + i);
-				health -= 5;
-				std::cout << "health:" << health << "\n";
+				if (enemies[i].getFillColor() == sf::Color::Black)
+				{
+					enemies.erase(enemies.begin() + i);
+				}
+				else
+				{
+					enemies.erase(enemies.begin() + i);
+					health -= 5;
+					std::cout << "health:" << health << "\n";
+				}
+				
 			}
 			else 
 			{
@@ -262,7 +276,7 @@ void Game::updateEnemies()
 						points += 10;
 						std::cout << "points:" << points << "\n";
 					}
-					else if (enemies[i].getFillColor() == sf::Color::Red)
+					else if (enemies[i].getFillColor() == sf::Color::Red )
 					{
 						if (points > 20) 
 						{
@@ -371,13 +385,13 @@ void Game::update()
 			}
 		}
 		output.close();
-
-		endGame = true;
-		updateText();
 		for (int i = 0; i <= enemies.size(); i++)
 		{
 			enemies[i].setFillColor(sf::Color::Black);
 		}
+		endGame = true;
+		updateText();
+
 
 	} 
 	if (endGame)
