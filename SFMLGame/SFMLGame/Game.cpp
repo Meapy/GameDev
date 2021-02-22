@@ -98,22 +98,27 @@ void Game::spawnEnemy()
 	case 0:
 		enemy.setFillColor(sf::Color::Cyan);
 		enemy.setSize(sf::Vector2f(40.f, 40.f));
+		enemy.setOutlineColor(sf::Color::White);
 		break;	
 	case 1:
 		enemy.setFillColor(sf::Color::Magenta);
 		enemy.setSize(sf::Vector2f(50.f, 50.f));
+		enemy.setOutlineColor(sf::Color::Black);
 		break;	
 	case 2:
 		enemy.setFillColor(sf::Color::Green);
 		enemy.setSize(sf::Vector2f(70.f, 70.f));
+		enemy.setOutlineColor(sf::Color::Black);
 		break;
 	case 3:
 		enemy.setFillColor(sf::Color::Blue);
 		enemy.setSize(sf::Vector2f(100.f, 100.f));
+		enemy.setOutlineColor(sf::Color::Black);
 		break;
 	case 4:
 		enemy.setFillColor(sf::Color::Red);
 		enemy.setSize(sf::Vector2f(value, value));
+		enemy.setOutlineColor(sf::Color::Black);
 		break;
 	default:
 		break;
@@ -179,21 +184,23 @@ void Game::updateEnemies()
 	{
 		bool deleted = false;
 		//check if enemy moves sideways
-		if (enemies[i].getPosition().x > window->getSize().x && movedRight == false)
+		if (enemies[i].getPosition().x > window->getSize().x - 50)
 		{
-			movedRight = true;
+			enemies[i].setOutlineColor(sf::Color::White);
 		}
-		else if (enemies[i].getPosition().x < 0 && movedRight == true)
+		else if (enemies[i].getPosition().x < 50 )
 		{
-			movedRight = false;
+			enemies[i].setOutlineColor(sf::Color::Black);
 		}
-		if (movedRight == false)
+
+		if (enemies[i].getPosition().x < window->getSize().x && enemies[i].getOutlineColor() == sf::Color::White)
+		{
+			
+			enemies[i].move(invertsidespeed, movespeed);
+		}
+		else if (enemies[i].getPosition().x > 0 && enemies[i].getOutlineColor() == sf::Color::Black)
 		{
 			enemies[i].move(sidespeed, movespeed);
-		}
-		else if(movedRight == true)
-		{
-			enemies[i].move(invertsidespeed, movespeed);
 		}
 
 		//if enemy gets past the bottom of the screen
