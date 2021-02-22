@@ -7,16 +7,17 @@ void Game::initiVariables()
 	window = nullptr;
 
 	endGame = false;
-	points = 0;
+	points = 900;
 	health = 100;
 	enemySpawnTimeMax = 20.f;
-	sidespeed = 1.f;
+	sidespeed = 0.5f;
 	invertsidespeed = sidespeed * -1.f;
-	movespeed = 5.f;
+	movespeed = 4.f;
 	enemySpawnTimer = enemySpawnTimeMax;
 	maxEnemies = 6;
 	mouseHeld = false;
 	movedRight = true;
+	evenLevel = true;
 
 }
 
@@ -91,34 +92,36 @@ void Game::spawnEnemy()
 	//randomize enemy type
 	int type = rand() % 5;
 	std::vector<float> list{ 30,50,70,100 };
+	sf::Color colors[] = { sf::Color::White, sf::Color::Black };
 	int index = rand() % list.size();
+	int direction = rand() % 2;
 	float value = list[index];
 	switch (type)
 	{
 	case 0:
 		enemy.setFillColor(sf::Color::Cyan);
 		enemy.setSize(sf::Vector2f(40.f, 40.f));
-		enemy.setOutlineColor(sf::Color::White);
+		enemy.setOutlineColor(colors[direction]);
 		break;	
 	case 1:
 		enemy.setFillColor(sf::Color::Magenta);
 		enemy.setSize(sf::Vector2f(50.f, 50.f));
-		enemy.setOutlineColor(sf::Color::Black);
+		enemy.setOutlineColor(colors[direction]);
 		break;	
 	case 2:
 		enemy.setFillColor(sf::Color::Green);
 		enemy.setSize(sf::Vector2f(70.f, 70.f));
-		enemy.setOutlineColor(sf::Color::Black);
+		enemy.setOutlineColor(colors[direction]);
 		break;
 	case 3:
 		enemy.setFillColor(sf::Color::Blue);
 		enemy.setSize(sf::Vector2f(100.f, 100.f));
-		enemy.setOutlineColor(sf::Color::Black);
+		enemy.setOutlineColor(colors[direction]);
 		break;
 	case 4:
 		enemy.setFillColor(sf::Color::Red);
 		enemy.setSize(sf::Vector2f(value, value));
-		enemy.setOutlineColor(sf::Color::Black);
+		enemy.setOutlineColor(colors[direction]);
 		break;
 	default:
 		break;
@@ -287,21 +290,32 @@ void Game::updateEnemies()
 
 void Game::updateDifficulty()
 {
-	if (points >= 1000 && points < 2000)
+	if(points < 1000 && evenLevel == true)
+	{
+		enemySpawnTimeMax = 15.f;
+		sidespeed = 0.f;
+		movespeed = 4.f;
+		enemySpawnTimer = enemySpawnTimeMax;
+		maxEnemies = 6;
+		evenLevel = false;
+	}
+	else if (points >= 1000 && points < 2000 && evenLevel == false)
 	{
 		enemySpawnTimeMax = 15.f;
 		sidespeed = 1.5f;
-		movespeed = 5.5f;
+		movespeed = 5.f;
 		enemySpawnTimer = enemySpawnTimeMax;
 		maxEnemies = 8;
+		evenLevel = true;
 	}
-	else if (points >= 2000)
+	else if (points >= 2000 && evenLevel == true)
 	{
 		enemySpawnTimeMax = 10.f;
 		sidespeed = 2.f;
-		movespeed = 6.f;
+		movespeed = 5.5f;
 		enemySpawnTimer = enemySpawnTimeMax;
 		maxEnemies = 10;
+		evenLevel = false;
 	}
 }
 

@@ -40,6 +40,7 @@ private:
 	//game logic
 	bool endGame;
 	bool movedRight;
+	bool evenLevel;
 	unsigned points;
 	int health;
 	float enemySpawnTimer;
