@@ -77,10 +77,6 @@ const bool Game::getWindowIsOpen() const
 	return window->isOpen();
 }
 
-const bool Game::getEndGame() const
-{
-	return endGame;
-}
 
 
 //functions
@@ -378,6 +374,28 @@ void Game::updateHighscore()
 	updateText();
 }
 
+void Game::displayHighscore()
+{
+	updateText();
+	window->clear();
+	std::stringstream highscores;
+	std::stringstream message;
+	message << "Press Enter\n to go again \n";
+
+	highscores << "Your score that round: " << points << "\n";
+	int i = 0;
+	std::ifstream input("Resources/highscore.txt");
+	while (input >> highscore[i])
+	{
+		highscores << "High Score " << i + 1 << ": " << highscore[i] << "\n";  //reads the highscores from the file, 
+		i++;
+	}
+	input.close();
+	uiText.setString(highscores.str());
+	infoUpdate.setString(message.str());
+	updateMousePositions();
+}
+
 void Game::update()
 {
 	pollEvents();
@@ -402,24 +420,7 @@ void Game::update()
 	} 
 	if (endGame)
 	{
-		updateText();
-		window->clear();
-		std::stringstream highscores;
-		std::stringstream message;
-		message << "Press Enter\n to go again \n";
-		
-		highscores << "Your score that round: " << points << "\n";
-		int i = 0;
-		std::ifstream input("Resources/highscore.txt");
-		while (input >> highscore[i])
-		{
-			highscores << "High Score " << i + 1 << ": " << highscore[i] << "\n";  //reads the highscores from the file, 
-			i++;
-		}
-		input.close();
-		uiText.setString(highscores.str());
-		infoUpdate.setString(message.str());
-		updateMousePositions();
+		displayHighscore();
 	}
 	
 }

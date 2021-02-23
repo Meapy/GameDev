@@ -6,6 +6,7 @@
 #include<sstream>
 #include<string>
 #include<fstream>
+#include<future>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
@@ -29,6 +30,7 @@ private:
 	//mouse positions
 	sf::Vector2i mousePosWindow;
 	sf::Vector2f mousePosView;
+
 
 
 	//resources
@@ -88,6 +90,7 @@ public:
 	void updateEnemies();
 	void updateDifficulty();
 	void updateHighscore();
+	void displayHighscore();
 	void update();
 
 
