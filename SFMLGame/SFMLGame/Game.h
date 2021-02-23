@@ -87,7 +87,9 @@ public:
 	void updateText();
 	void updateEnemies();
 	void updateDifficulty();
+	void updateHighscore();
 	void update();
+
 
 	void renderText(sf::RenderTarget& target);
 	void renderEnemies(sf::RenderTarget& target);

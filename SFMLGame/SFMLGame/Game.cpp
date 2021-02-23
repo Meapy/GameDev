@@ -96,9 +96,9 @@ void Game::spawnEnemy()
 	//randomize enemy type
 	int type = rand() % 5;
 	std::vector<float> list{ 30,50,70,100 };
-	sf::Color colors[] = { sf::Color::White, sf::Color::Black }; // using border colours to determine sideways direction
+	std::vector<sf::Color> colors = { sf::Color::White, sf::Color::Black }; // using border colours to determine sideways direction
 	int index = rand() % list.size();
-	int direction = rand() % 2; //chooses random
+	int direction = rand() % colors.size(); //chooses random colour, my way of using a boolean for the enemy game object
 	float value = list[index];
 	switch (type)
 	{
@@ -114,7 +114,7 @@ void Game::spawnEnemy()
 		break;	
 	case 2:
 		enemy.setFillColor(sf::Color::Green);
-		enemy.setSize(sf::Vector2f(60.f, 60.f));
+		enemy.setSize(sf::Vector2f(value, value)); // green changes sizes
 		enemy.setOutlineColor(colors[direction]);
 		break;
 	case 3:
@@ -124,7 +124,7 @@ void Game::spawnEnemy()
 		break;
 	case 4:
 		enemy.setFillColor(sf::Color::Red);
-		enemy.setSize(sf::Vector2f(value, value));
+		enemy.setSize(sf::Vector2f(value, value)); //same with red
 		enemy.setOutlineColor(colors[direction]);
 		break;
 	default:
@@ -170,10 +170,8 @@ void Game::updateText()
 {
 	std::stringstream ss;
 
-	ss << "Score:"<< points
-		<< "\nHealth:" << health;
+	ss << "Score:"<< points << "\nHealth:" << health;
 	uiText.setString(ss.str());
-
 
 }
 
@@ -233,23 +231,19 @@ void Game::updateEnemies()
 					health -= 5;
 					std::cout << "health:" << health << "\n";
 				}
-				
 			}
 			else 
 			{
 				enemies.erase(enemies.begin() + i);
 				std::cout << "health:" << health << "\n";
 			}
-			
 		}
-		
 	}
 
 	//check if clicked upon
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 	{
-		
 		if (mouseHeld == false) //stops from mouse being held 
 		{
 			mouseHeld = true;
@@ -304,8 +298,7 @@ void Game::updateEnemies()
 					enemies.erase(enemies.begin() + i);
 				}
 			}
-		}
-		
+		}	
 	}
 	else
 	{
@@ -344,6 +337,47 @@ void Game::updateDifficulty()// if score reaches one of the threshholds, the dif
 	}
 }
 
+void Game::updateHighscore()
+{
+	std::ifstream input("Resources/highscore.txt"); // reads the current highscores
+	int i = 0;
+	while (input >> highscore[i])
+	{
+		std::cout << highscore[i] << "\n";
+		i++;
+	}
+	input.close();
+	std::ofstream output("Resources/highscore.txt");
+	int k;
+	for (size_t i = 0; i < 5; i++)
+	{
+		if (points >= highscore[i]) //compares the current score to the high scores
+		{							//once a match is found, the score is replaced, and others get sifted down
+			temp = highscore[i];
+			highscore[i] = points;
+			output << std::to_string(highscore[i]) << "\n";
+			for (k = i + 1; k < 5; k++)
+			{
+				output << std::to_string(temp) << "\n";
+				i++;
+				temp = highscore[k];
+				highscore[i] = temp;
+			}
+			break;
+		}
+		else
+		{
+			output << std::to_string(highscore[i]) << "\n";
+		}
+	}
+	output.close();
+	for (int i = 0; i <= enemies.size(); i++)
+	{
+		enemies[i].setFillColor(sf::Color::Black); //turns all the squares black to "delete" them, gets deleted once you go again
+	}												// for some reason they couldnt get deleted here.
+	updateText();
+}
+
 void Game::update()
 {
 	pollEvents();
@@ -363,47 +397,8 @@ void Game::update()
 	if (health <= 0 && !endGame)
 	{
 	
-		std::ifstream input("Resources/highscore.txt"); // reads the current highscores
-		int i = 0;
-		while (input >> highscore[i])
-		{
-			std::cout << highscore[i]<<"\n";
-			i++;
-		}
-		input.close();
-		std::ofstream output("Resources/highscore.txt");
-		int k;
-		for (size_t i = 0; i < 5; i++)
-		{
-			if (points >= highscore[i]) //compares the current score to the high scores
-			{							//once a match is found, the score is replaced, and others get sifted down
-				temp = highscore[i];
-				highscore[i] = points;			
-				output << std::to_string(highscore[i]) << "\n";
-				for(k = i + 1; k < 5; k++)
-				{
-					output << std::to_string(temp) << "\n";
-					i++;
-					temp = highscore[k];
-					highscore[i] = temp;
-				}
-				break;
-			}
-			else 
-			{
-
-				output << std::to_string(highscore[i]) << "\n";
-			}
-		}
-		output.close();
-		for (int i = 0; i <= enemies.size(); i++)
-		{
-			enemies[i].setFillColor(sf::Color::Black); //turns all the squares black to "delete" them, gets deleted once you go again
-		}												// for some reason they couldnt get deleted here.
+		updateHighscore();
 		endGame = true;
-		updateText();
-
-
 	} 
 	if (endGame)
 	{
@@ -428,6 +423,8 @@ void Game::update()
 	}
 	
 }
+
+
 
 void Game::renderText(sf::RenderTarget& target)
 {
