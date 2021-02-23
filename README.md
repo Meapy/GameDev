@@ -11,3 +11,6 @@ The difficulty increases after 1k and 2k points,
 highscore shows the top 5 scores at the end of the game, 
 once in highscore screen, you can press enter to restart the game.
 
+Game Screenshots:
+![Screenshot 1](https://i.gyazo.com/78d95d84bf91618c0d0e4cfa785e30f5.png)
+![Screenshot 2](https://i.gyazo.com/83292cf8fb58df8ab40b0a1056e6ccfe.png)
